@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>V1A10</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #002b5c;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  header {
+    background-color: #fbd13f;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header .left {
+    display: flex;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: black;
+    cursor: pointer;
+    user-select: none;
+  }
+  header input[type="text"] {
+    margin-left: 10px;
+    padding: 5px;
+    font-size: 1rem;
+  }
+  header nav a {
+    margin-left: 15px;
+    color: green;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  #hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  #hero img {
+    width: 80%;
+    max-width: 1000px;
+    position: relative;
+    z-index: 1;
+    animation: slideInFromLeft 1s forwards;
+    opacity: 0;
+  }
+  @keyframes slideInFromLeft {
+    0% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  #bg-stars, #aboutMeBgStars, #nextPageBgStars {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: hidden;
+    z-index: 0;
+  }
+  #bg-stars::before, #aboutMeBgStars::before, #nextPageBgStars::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6) 0%, transparent 80%);
+    z-index: -1;
+  }
+  .star {
+    position: absolute;
+    background: yellow;
+    border-radius: 50%;
+    animation: blink 2s infinite ease-in-out;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+  .shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(white, transparent);
+    opacity: 0.8;
+    transform: rotate(225deg);
+    animation: shoot 2s linear infinite;
+  }
+  @keyframes shoot {
+    0% {
+      transform: translate(0, 0) rotate(225deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-400px, 400px) rotate(225deg);
+      opacity: 0;
+    }
+  }
+
+  #nextPage {
+    height: 100vh;
+    background-color: #002b5c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+    position: relative;
+    z-index: 1;
+  }
+  #nextPage.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin: 20px 0;
+  }
+  .row:last-child {
+    gap: 160px;
+  }
+
+  .circle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .circle-link {
+    width: 240px;
+    height: 240px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    user-select: none;
+    position: relative;
+    box-shadow: 0 0 15px yellow;
+    animation: breathe-scale-shadow 3s ease-in-out infinite;
+  }
+
+  .circle-link p {
+    margin: 0;
+    line-height: 1.3;
+    font-size: 2rem;
+    animation: breathe-text-updown 3s ease-in-out infinite;
+  }
+
+  .circle-text {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: white;
+    user-select: none;
+    pointer-events: none;
+    font-weight: bold;
+  } 
+
+  .circle-text {
+    animation: breathe-text-updown 3s ease-in-out infinite;
+    position: relative;
+    top: 0;
+  }
+
+  @keyframes breathe-scale-shadow {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 15px yellow;
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 35px yellow;
+    }
+  }
+
+  @keyframes breathe-text-updown {
+    0%, 100% {
+      top: 0;
+    }
+    50% {
+      top: 12px;
+    }
+  }
+
+  #aboutMeSection {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #002b5c;
+    color: white;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 10;
+    padding: 20px;
+  }
+  #aboutMeContent {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 400px;
+  }
+  #aboutMeContent h2 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    user-select: none;
+  }
+  #aboutMeContent a {
+    color: #fbd13f;
+    text-decoration: none;
+    display: block;
+    margin: 20px 0;
+    font-size: 1.2rem;
+  }
+  #aboutMeCloseBtn {
+    margin-top: 40px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #fbd13f;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: black;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="left">
+    <h1 id="headerTitle">PortfolioVerse</h1>
+    <input id="searchInput" type="text" placeholder="search" />
+  </div>
+  <nav>
+    <a id="navNotifications">Notifications</a>
+    <a id="navProduct">Product</a>
+    <a id="navMail">Mail</a>
+    <a id="navNotification">Notification</a>
+  </nav>
+</header>
+<section id="hero">
+  <div id="bg-stars"></div>
+  <img src="images/Portfolioverse.png" alt="Portfolioverse" />
+</section>
+<section id="nextPage">
+  <div id="nextPageBgStars"></div>
+  <div class="row">
+    <div class="circle-container">
+      <a class="circle-link" id="homeLink" href="#" onclick="location.reload(); return false;">
+        <p>Click</p><p>me</p>
+      </a>
+      <div class="circle-text">Home</div>
+    </div>
+    <div class="circle-container">
+      <a class="circle-link" id="portfolioLink" href="#portfolio">
+        <p>Not</p><p>Finish</p><p>Yet</p>
+      </a>
+      <div class="circle-text">Portfolio</div>
+    </div>
+    <div class="circle-container">
+      <a class="circle-link" id="newsLink" href="#news">
+        <p>Not</p><p>Finish</p><p>Yet</p>
+      </a>
+      <div class="circle-text">News</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="circle-container">
+      <a class="circle-link" id="aboutMeLink" href="javascript:void(0)">
+        <p>Click</p><p>me</p>
+      </a>
+      <div class="circle-text">About Me</div>
+    </div>
+    <div class="circle-container">
+      <a class="circle-link" id="contactLink" href="#contact">
+        <p>Not</p><p>Finish</p><p>Yet</p>
+      </a>
+      <div class="circle-text">Contact Me</div>
+    </div>
+  </div>
+</section>
+
+<section id="aboutMeSection">
+  <div id="aboutMeBgStars"></div>
+  <div id="aboutMeContent">
+    <h2>About Me</h2>
+    <a href="https://www.instagram.com/hyacinthus0306" target="_blank" rel="noopener noreferrer">Instagram: hyacinthus0306</a>
+    <a href="https://www.facebook.com/李燦隆" target="_blank" rel="noopener noreferrer">Facebook: 李燦隆</a>
+    <a href="mailto:leanard0306@gmail.com">Email: leanard0306@gmail.com</a>
+    <button id="aboutMeCloseBtn">Back</button>
+  </div>
+</section>
+
+<script>
+  function generateStars(containerId, starCount = 40) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = (Math.random() * 100) + 'vh';
+      star.style.left = (Math.random() * 100) + 'vw';
+      const size = (Math.random() * 3) + 1;
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.animationDelay = (Math.random() * 3) + 's';
+      container.appendChild(star);
+    }
+  }
+
+  function generateShootingStars(containerId, count = 3) {
+    const container = document.getElementById(containerId);
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement('div');
+      star.classList.add('shooting-star');
+      star.style.top = Math.random() * window.innerHeight + 'px';
+      star.style.left = Math.random() * window.innerWidth + 'px';
+      star.style.animationDelay = '0s';
+      container.appendChild(star);
+    }
+  }
+
+  generateStars('bg-stars');
+  generateStars('aboutMeBgStars');
+  generateStars('nextPageBgStars');
+  generateShootingStars('nextPageBgStars');
+  generateShootingStars('bg-stars');
+  generateShootingStars('aboutMeBgStars');
+
+  let isScrolling = false;
+  let onNextPage = false;
+  const hero = document.getElementById('hero');
+  const nextPage = document.getElementById('nextPage');
+  const heroImg = hero.querySelector('img');
+  const headerTitle = document.getElementById('headerTitle');
+  const searchInput = document.getElementById('searchInput');
+  const navMail = document.getElementById('navMail');
+  const homeLink = document.getElementById('homeLink');
+  const aboutMeLink = document.getElementById('aboutMeLink');
+  const aboutMeSection = document.getElementById('aboutMeSection');
+  const aboutMeCloseBtn = document.getElementById('aboutMeCloseBtn');
+
+  window.addEventListener('wheel', (e) => {
+    if (isScrolling) return;
+    if (!onNextPage && e.deltaY > 0) {
+      isScrolling = true;
+      onNextPage = true;
+      smoothScrollTo(window.innerHeight, () => {
+        isScrolling = false;
+        heroImg.style.opacity = '0';
+        hero.style.display = 'none';
+        nextPage.classList.add('visible');
+      });
+    } else if (onNextPage && e.deltaY < 0) {
+      isScrolling = true;
+      onNextPage = false;
+      hero.style.display = 'flex';
+      smoothScrollTo(0, () => {
+        isScrolling = false;
+        heroImg.style.opacity = '1';
+        nextPage.classList.remove('visible');
+      });
+    }
+  });
+
+  function smoothScrollTo(targetY, callback, duration = 800) {
+    const startY = window.scrollY || window.pageYOffset;
+    const distance = targetY - startY;
+    let startTime = null;
+    function animation(currentTime) {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+      window.scrollTo(0, startY + distance * ease);
+      if (progress < 1) {
+        requestAnimationFrame(animation);
+      } else {
+        if (callback) callback();
+      }
+    }
+    requestAnimationFrame(animation);
+  }
+
+  headerTitle.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (onNextPage) {
+      onNextPage = false;
+      nextPage.classList.remove('visible');
+      hero.style.display = 'flex';
+      heroImg.style.opacity = '1';
+    }
+    aboutMeSection.style.display = 'none';
+  });
+
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      alert('You searched for: ' + searchInput.value);
+      searchInput.value = '';
+    }
+  });
+
+  navMail.addEventListener('click', () => {
+    alert('My mail is: leanard0306@gmail.com');
+  });
+
+  homeLink.addEventListener('click', () => {
+    aboutMeSection.style.display = 'none';
+    nextPage.classList.remove('visible');
+    hero.style.display = 'flex';
+    heroImg.style.opacity = '1';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onNextPage = false;
+  });
+
+  aboutMeLink.addEventListener('click', () => {
+    aboutMeSection.style.display = 'flex';
+    nextPage.classList.remove('visible');
+    hero.style.display = 'none';
+    window.scrollTo(0, 0);
+    onNextPage = false;
+  });
+
+  aboutMeCloseBtn.addEventListener('click', () => {
+    aboutMeSection.style.display = 'none';
+    nextPage.classList.add('visible');
+  });
+</script>
+</body>
+</html>
